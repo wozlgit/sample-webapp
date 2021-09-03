@@ -1,7 +1,9 @@
 const http = require('http');
 const fs = require('fs');
 
-http.createServer((req, res) => {
+const port = process.env.PORT || 8002
+
+const server = http.createServer((req, res) => {
     if(req.method == 'GET'){
         if(req.url == '/'){
             res.statusCode = 200;
@@ -23,3 +25,7 @@ http.createServer((req, res) => {
         res.end();
     }
 });
+
+server.listen(port, () => {
+    console.log('Server listening on port ' + port + '\n');
+})
