@@ -1,30 +1,35 @@
 const pg = require('pg');
 
+/** @type {pg.Pool} */
 let pool;
 
 module.exports = {
-    init: async () => {
-        console.log('Initializing PostgreSQL');
+    init: () => {
         pool = new pg.Pool({
             connectionString: process.env.DATABASE_URL,
             ssl: {
                 rejectUnauthorized: false
             }
         });
-        pool.connect((err, client, done) => {
-            if(err){
-                done(err);
-            }
-            client.query('CREATE TABLE IF NOT EXIST notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate Date, note text)', (err, result) => {
-                if(err){
-                    done(err);
-                }
-                done(true);
+        return pool.connect()
+        .then(client => {
+            client.query('CREATE TABLE IF NOT EXIST notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate Date, note text)')
+            .then(result => {
+                client.release(true);
+            })
+            .catch(err => {
+                console.error(err);
+                client.release(err);
             });
+        })
+        .catch(err => {
+            console.error(err);
         });
-        console.log('Finished initialization of PostgreSQL');
     },
-    query: (text, params, callback) => {
-        return pool.query(text, params, callback);
+    query: (text, params) => {
+        return pool.query(text, params);
+    },
+    shutdown: () => {
+        return pool.end();
     }
 }

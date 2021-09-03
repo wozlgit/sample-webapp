@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
             res.setHeader('Content-Type', 'text/html;charset=utf-8');
             res.end(fs.readFileSync('static/html/home.html'));
         }
-        else if(req.url.slice(0, 3) == '/js'){
+        else if(req.url == '/js/index.js'){
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/javascript');
             res.end(fs.readFileSync('static/js/index.js'));
