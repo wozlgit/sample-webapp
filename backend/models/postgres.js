@@ -13,7 +13,7 @@ module.exports = {
         });
         return pool.connect()
         .then(client => {
-            client.query('CREATE TABLE IF NOT EXIST notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate Date, note text)')
+            client.query('CREATE TABLE IF NOT EXISTS notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate Date, note text)')
             .then(result => {
                 client.release(true);
             })
