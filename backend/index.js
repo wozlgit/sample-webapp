@@ -6,9 +6,8 @@ const home = require('./controllers/home');
 const notes = require('./controllers/notes');
 const db = require('./models/postgres');
 
-const port = process.env.PORT | 8000;
+const port = process.env.PORT || 8000;
 /** @type {http.Server} */
-let server, gracefulShutdown;
 
 // Initialize database
 db.init()
@@ -21,7 +20,7 @@ db.init()
     process.exit(1);
 });
 
-server = http.createServer((req, res) => {
+const server = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'application/json');
     if(req.method == 'GET'){
         if(req.url == '/'){
@@ -73,7 +72,7 @@ server.listen(port, () => {
     console.log('Server listening on port ' + port + '\n');
 });
 
-gracefulShutdown = (reason) => {
+const gracefulShutdown = () => {
     console.err(reason);
     db.shutdown()
     .finally(() => {

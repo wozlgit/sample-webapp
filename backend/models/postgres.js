@@ -10,9 +10,7 @@ module.exports = {
             connectionString: process.env.DATABASE_URL,
             ssl: false
         }
-        if(process.env.NODE_ENV == 'production') connectionOptions.ssl = {
-            rejectUnauthorized: false
-        };
+        if(process.env.NODE_ENV == 'production') connectionOptions.ssl = { rejectUnauthorized: false };
         pool = new pg.Pool(connectionOptions);
         console.log('Connecting to database...');
         return pool.connect()
