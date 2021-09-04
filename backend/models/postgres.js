@@ -6,10 +6,14 @@ let pool;
 module.exports = {
     init: () => {
         console.log('Initializing database...');
-        pool = new pg.Pool({
+        let connectionOptions = {
             connectionString: process.env.DATABASE_URL,
-            ssl: (process.env.NODE_ENV == 'production' ? { rejectUnauthorized: false } : false)
-        });
+            ssl: false
+        }
+        if(process.env.NODE_ENV == 'production') connectionOptions.ssl = {
+            rejectUnauthorized: false
+        };
+        pool = new pg.Pool(connectionOptions);
         console.log('Connecting to database...');
         return pool.connect()
         .then(client => {
