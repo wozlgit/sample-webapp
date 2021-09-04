@@ -7,13 +7,11 @@ module.exports = {
     init: () => {
         pool = new pg.Pool({
             connectionString: process.env.DATABASE_URL,
-            ssl: {
-                rejectUnauthorized: false
-            }
+            ssl: (process.env.NODE_ENV == 'production' ? { rejectUnauthorized: false } : false)
         });
         return pool.connect()
         .then(client => {
-            client.query('CREATE TABLE IF NOT EXISTS notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate Date, note text)')
+            client.query('CREATE TABLE IF NOT EXISTS notes (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title text, creationDate timestamp, note text)')
             .then(result => {
                 client.release(true);
             })
