@@ -1,8 +1,12 @@
 const db = require('../models/postgres');
 
 module.exports = {
-    get: (req, res) => {
-        let noteID = req.url.slice(7);
+    get: (req, res, path) => {
+        if(path[1].length < 1){
+            res.statusCode = 404;
+            res.end();
+        }
+        let noteID = path[1];
         db.query('SELECT * FROM notes WHERE id = $1', [noteID])
         .then(result => {
             res.statusCode = 200;
@@ -13,7 +17,7 @@ module.exports = {
             res.end(JSON.stringify({err: err}));
         });
     },
-    create: (req, res) => {
+    create: (req, res, path) => {
         let body = '';
         req.on('data', (chunk) => {
             body += chunk;
@@ -39,13 +43,13 @@ module.exports = {
             })
         });
     },
-    edit: (req, res) => {
-        if(req.url.length < 8){
+    edit: (req, res, path) => {
+        if(path[1].length < 1){
             res.statusCode = 404;
             res.end();
         }
         else {
-            let noteID = req.url.slice(7);
+            let noteID = path[1];
             let body = '';
             req.on('data', (chunk) => {
                 body += chunk;
@@ -72,13 +76,13 @@ module.exports = {
             });
         }
     },
-    delete: (req, res) => {
-        if(req.url.length < 8){
+    delete: (req, res, path) => {
+        if(path[1].length < 1){
             res.statusCode = 404;
             res.end();
         }
         else {
-            let noteID = req.url.slice(7);
+            let noteID = path[1];
             db.query("DELETE FROM notes WHERE id = $1", [noteID])
             .then(result => {
                 res.statusCode = 200;
@@ -90,7 +94,7 @@ module.exports = {
             })
         }
     },
-    list: (req, res) => {
+    list: (req, res, path) => {
         db.query("SELECT * FROM notes", [])
         .then(result => {
             res.statusCode = 200;

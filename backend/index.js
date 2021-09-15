@@ -22,13 +22,20 @@ db.init()
 
 const server = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'application/json');
+    let path = req.url.split('/');
+    path = path.filter(value => value.length > 0);
+    console.log(path);
     if(req.method == 'GET'){
-        if(req.url == '/'){
-            home(req, res);
+        if(path.length == 0){
+            home(req, res, path);
         }
-        else if(req.url.slice(0, 7) == '/notes/'){
-            if(req.url.length < 8) notes.list(req, res);
-            else notes.get(req, res);
+        else if(path[0] == 'notes'){
+            if(path.length < 2) notes.list(req, res, path);
+            else if(path.length == 2) notes.get(req, res, path);
+            else {
+                res.statusCode = 404;
+                res.end();
+            }
         }
         else {
             res.statusCode = 404;
@@ -36,7 +43,7 @@ const server = http.createServer((req, res) => {
         }
     }
     else if(req.method == 'POST'){
-        if(req.url == '/notes/'){
+        if(path.length == 1 && path[0] == 'notes'){
             notes.create(req, res);
         }
         else {
@@ -45,7 +52,7 @@ const server = http.createServer((req, res) => {
         }
     }
     else if(req.method == 'PUT'){
-        if(req.url.slice(0, 7) == '/notes/'){
+        if(path.length == 2 && path[0] == 'notes'){
             notes.edit(req, res);
         }
         else {
@@ -54,7 +61,7 @@ const server = http.createServer((req, res) => {
         }
     }
     else if(req.method == 'DELETE'){
-        if(req.url.slice(0, 7) == '/notes/'){
+        if(path.length == 2 && path[0] == 'notes'){
             notes.delete(req, res);
         }
         else {
