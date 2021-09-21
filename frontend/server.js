@@ -4,6 +4,7 @@ const fs = require('fs');
 const port = process.env.PORT || 8002;
 
 const server = http.createServer((req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     if(req.method == 'GET'){
         if(req.url == '/'){
             res.statusCode = 200;
@@ -13,7 +14,7 @@ const server = http.createServer((req, res) => {
         else if(req.url == '/js/index.js'){
             res.statusCode = 200;
             res.setHeader('Content-Type', 'text/javascript');
-            res.end(fs.readFileSync('static/js/index.js'));
+            res.end(fs.readFileSync('dist/index.js'));
         }
         else {
             res.statusCode = 404;

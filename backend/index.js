@@ -22,6 +22,7 @@ db.init()
 
 const server = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     let path = req.url.split('/');
     path = path.filter(value => value.length > 0);
     console.log(path);
